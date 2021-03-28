@@ -1,4 +1,4 @@
-##Advanced Lane Finding Project
+#Advanced Lane Finding Project - Computer Vision
 
 This is advanced lane detection project where I have used Computer Vision - OpenCV techniques to identify lane boundaries and compute the estimate the radius of curvature given a frame of video of the road. Below are the goals and steps taken in this project:
 
@@ -50,11 +50,16 @@ The transformation of a 3D object in the real world to a 2D image isn't perfect.
 
 A chess board can be used because its regular high contrast patterns makes it easy to detect and measure distortions as we know how and undistorted chessboard looks like. If we have multiple pictures of the same chessboard against a flat surface from the camera, we can get the from the difference between the apparent size and shape of the images compared to what it should theoretically be. We can create a transform that map the distorted points to undistorted points, and use this transform to undistort any image, which will be discussed more later.
 
-Check [Camera Calibration](./camera_calibration.py) for the implementation details. We save the parameters to a pickle file [Camera Calibration Pickle file](./camera_cal/cal_pickle.p), so we can use it later.
+Check [Camera Calibration](./camera_calibration.py) and [Camera Calibration Notebook](./camera_caliberation_with_chessboard.ipynb) for the implementation details. We save the parameters to a pickle file [Camera Calibration Pickle file](./camera_cal/cal_pickle.p), so we can use it later.
 
-I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection. I start with `9 corners` in `x-axis` and `6 corners` in `y-axis`. However, some of the calibration images only show a portion of the whole image and the we couldn't find `9` and `6` corners from them. As a result, I add a logic to search for fewer corners (e.g., `8 and 6`, `9 and 5`, etc.) once we couldn't detect corners from the original numbers. In this way, I'm able to find all the corners from the calibration images and able to use all of them for calibration.
+Here I have prepared "object points", comprising the (x, y, z) coordinates of the chessboard corners. It's assumed the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.Have updated the code to identified all the corners of the various chessboard images and then capturing the "mtx", "dist" . Once find corners is completed , introduced the `objp` hyper-parameter which is a replicated array of coordinates, and `objpoints` hyper-parameter will be appended with a copy of it every time .
 
-I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
+`imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection. Here `9 corners` in `x-axis` and `6 corners` in `y-axis` is used. However , since some of the chessboard images have separate dimentions , have used a range of +1 2 for x,y axis .
+
+Then , have used `cv2.calibrateCamera()` function inducting the output of `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients. The distortion correction parameters is used to the test image using the `cv2.undistort()` function. 
+
+![alt text][image1]
+![alt text][image2]
 
 The calibration result is saved as a `pickle` for future uses. [Camera Calibration Pickle file](./camera_cal/cal_pickle.p)
 
@@ -63,7 +68,7 @@ The calibration result is saved as a `pickle` for future uses. [Camera Calibrati
 
 ####1. Provide an example of a distortion-corrected image.
 
-The comparison between the test images and their undistorted images are shown below. Although it is pretty hard to tell the differences from naked eyes.
+The comparison between the test images and their undistorted images are shown below. The differences are not apparent, but have few corrections.
 
 ![alt text][image3]
 ![alt text][image4]
@@ -72,20 +77,19 @@ The comparison between the test images and their undistorted images are shown be
 ![alt text][image7]
 ![alt text][image8]
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
+One more example, to describe how the distortion correction is applied to one of the test images:
+
 ![alt text][image9]
 
 ####2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps are under `4` in the [IPython notebook](./pipeline.ipynb).  The thresholds include:
+Here, a combination of color and gradient thresholds is used to generate a binary image (check steps under point `4` in the [IPython notebook](./pipeline.ipynb). Below are the thresholds :
 
  1. `Sobel` on `x` direction
  2. `Yellow` and `white` color detection from `RGB`
  3. `Yellow` and `white` color detection from `HSV`
  4. `Yellow` and `white` color detection from `HLS`
  5. `S channel` from `HLS`
-
-A lot of credits are given to the community on `Slack` for the various ideas. The numbers for the thresholds are all hard-coded for now. A more robust approach will be explored later. Here's an example of my output for this step of the test image:
 
 ![alt text][image10]
 
@@ -95,17 +99,17 @@ A lot of credits are given to the community on `Slack` for the various ideas. Th
 
 Given an undistorted image of the vehicle’s perspective vehicle_view we can warp this image to output an image of another perspective such as a bird’s eye view from the sky sky_view given a transformation matrix. We can derive transformation matrix warp_matrix by giving the pixel coordinates of points of the input image of one perspective source_points and the corresponding pixels coordinates of the output perspective destination_points using the function getPerspectiveTransform(). When we use this warp_matrix to output an image to another perspective from a given perspective using the warpPerspective() function. You can get the inverse_warp_matrix to get from “sky_view” to “vehicle_view” by switching the places of the source and destination points fed into the function getPerspectiveTransform().
 
-The code for my perspective transform is located under the [Birdseye.py](./birdseye.py). The `PerspectiveTransform()` function uses pixel locations for both the original and new images and calculates the `M` and `Minv` matrices for perspective transform. Then, the `M` matrix is used by `cv2.warpPerspective` to convert the original image to its bird's view, while `Minv` is used to do transform in the opposite direction. Here's an example of my output for this step of the test image:
+The code for my perspective transform is located under the [Birdseye.py](./birdseye.py). The `PerspectiveTransform()` function uses pixel locations for both the original and new images and calculates the `M` and `Minv` matrices for perspective transform. Then, the `M` matrix is used by `cv2.warpPerspective` to convert the original image to its bird's view, while `Minv` is used to do transform in the opposite direction. Below is an example of the outpuyt:
 
 ![alt text][image11]
 
-And an example of a transformed image after thresholding is:
+Another example of a transformed image adding threshold:
 
 ![alt text][image12]
 
 ####4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-The code for my line detection is located under `5` in the [lane-detection](./lane_detection.py). I use a histogram to find the locations of the maximum pixels along the `y-axis` and assume those are the locations of the points on the line. A `RejectOutlier` function is used to compare the `x-axis` value of all the points to their median value and reject the ones who are far away from the median. Last, a 2nd order polynomial is used to fit the lane lines such as:
+Refer to the code for the line detection iin point `5` in the notebook [lane-detection](./lane_detection.py). A histogram is used to identify the locations of the maximum pixels along the `y-axis` and assume those are the locations of the points on the line. A `RejectOutlier` function is used to compare the `x-axis` value of all the points to their median value and reject the ones who are far away from the median. Last, a 2nd order polynomial is used to fit the lane lines such as:
 
 ![alt text][image13]
 
