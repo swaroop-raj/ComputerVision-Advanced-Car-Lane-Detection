@@ -81,15 +81,15 @@ class LaneDetection :
         right_curverad = ((1 + (2*right_fit_cr[0]*yval + right_fit_cr[1])**2)**1.5) \
                                         /np.absolute(2*right_fit_cr[0])
         font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(result, 'Left line curve: %dm' % left_curverad, (50,50), font, 1,(255,255,255),3)
-        cv2.putText(result, 'Right line curve: %dm' % right_curverad, (50,100), font, 1,(255,255,255),3)
+        cv2.putText(result, 'Left line curvature: %dm' % left_curverad, (50,50), font, 1,(255,255,255),3)
+        cv2.putText(result, 'Right line curvature: %dm' % right_curverad, (50,100), font, 1,(255,255,255),3)
 
         lane_middle = left_fitx[0] + (right_fitx[0] - left_fitx[0])/2.0
         deviation = (lane_middle - 640)*self.xm_per_pix
         if deviation >= 0:
-            cv2.putText(result, 'Vehicle is %.2fm right of center' % deviation, (50,150), font, 1,(255,255,255),3)
+            cv2.putText(result, 'Vehicle is located %.2fm right of center' % deviation, (50,150), font, 1,(255,255,255),3)
         else:
-            cv2.putText(result, 'Vehicle is %.2fm left of center' % -deviation, (50,150), font, 1,(255,255,255),3)
+            cv2.putText(result, 'Vehicle is located %.2fm left of center' % -deviation, (50,150), font, 1,(255,255,255),3)
         #ax[0].scatter(left_x, left_y, c = 'r')
         #ax[0].scatter(right_x, right_y, c = 'b')
         #ax[0].plot(left_fitx, left_y_ext, color='green', linewidth=3)

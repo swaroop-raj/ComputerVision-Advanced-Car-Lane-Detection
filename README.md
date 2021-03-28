@@ -145,3 +145,4 @@ Here's a [link to my video result][video1]
    
  1. How to use more deep learning techniques to predict the lanes better.
  2. How to tackle the harder challenge video
+ 3. How to make the vide convrsion to identify lanes more faster in realtime situations where it will be using live video from the cameras.
