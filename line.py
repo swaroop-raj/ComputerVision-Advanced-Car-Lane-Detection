@@ -82,7 +82,7 @@ class Line:
             cv2.putText(result, 'Vehicle is %.2fm right of center' % deviation, (50,150), font, 1,(255,255,255),3)
         else:
             cv2.putText(result, 'Vehicle is %.2fm left of center' % -deviation, (50,150), font, 1,(255,255,255),3)
-        #ax[0].scatter(left_x, left_y, c = 'r')
+        # ax[0].scatter(left_x, left_y, c = 'r')
         #ax[0].scatter(right_x, right_y, c = 'b')
         #ax[0].plot(left_fitx, left_y_ext, color='green', linewidth=3)
         #ax[0].plot(right_fitx, right_y_ext, color='green', linewidth=3)
